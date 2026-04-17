@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sam Christober Raja K | IoT &amp; Embedded Firmware Engineer</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        dark: { 900: '#0a0f1e', 800: '#0f172a', 700: '#1a2340', 600: '#243052' },
+        neon: { green: '#00ff88', cyan: '#00d4ff', blue: '#4d7cff' }
+      }
+    }
+  }
+}
+</script>
+  <style>
+html, body { height: 100%; margin: 0; font-family: 'Outfit', sans-serif; }
+* { box-sizing: border-box; }
+
+.app-wrapper { height: 100%; overflow-y: auto; overflow-x: hidden; background: #0a0f1e; color: #e2e8f0; scroll-behavior: smooth; }
+
+/* Circuit board animated background */
+.circuit-bg {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.circuit-line {
+  position: absolute; background: linear-gradient(90deg, transparent, rgba(0,255,136,0.15), transparent);
+  height: 1px; animation: circuitFlow 8s linear infinite;
+}
+.circuit-line-v {
+  position: absolute; background: linear-gradient(180deg, transparent, rgba(0,212,255,0.1), transparent);
+  width: 1px; animation: circuitFlowV 10s linear infinite;
+}
+.circuit-dot {
+  position: absolute; width: 4px; height: 4px; border-radius: 50%; background: rgba(0,255,136,0.3);
+  animation: dotPulse 3s ease-in-out infinite;
+}
+@keyframes circuitFlow { 0% { transform: translateX(-100%); opacity:0; } 50% { opacity:1; } 100% { transform: translateX(200%); opacity:0; } }
+@keyframes circuitFlowV { 0% { transform: translateY(-100%); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(200%); opacity:0; } }
+@keyframes dotPulse { 0%,100% { opacity:0.2; transform:scale(1); } 50% { opacity:0.8; transform:scale(1.8); } }
+
+/* Typing animation */
+.typing-cursor { display: inline-block; width: 2px; height: 1.1em; background: #00ff88; margin-left: 4px; animation: blink 0.8s step-end infinite; vertical-align: text-bottom; }
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+/* Glow effects */
+.glow-green { box-shadow: 0 0 20px rgba(0,255,136,0.15), 0 0 60px rgba(0,255,136,0.05); }
+.glow-cyan { box-shadow: 0 0 20px rgba(0,212,255,0.15), 0 0 60px rgba(0,212,255,0.05); }
+.glow-text { text-shadow: 0 0 20px rgba(0,255,136,0.4); }
+.glow-text-cyan { text-shadow: 0 0 20px rgba(0,212,255,0.4); }
+
+/* Hover effects */
+.card-hover { transition: all 0.3s ease; }
+.card-hover:hover { transform: translateY(-6px); box-shadow: 0 0 30px rgba(0,255,136,0.12); }
+.badge-hover { transition: all 0.25s ease; }
+.badge-hover:hover { background: rgba(0,255,136,0.15); transform: scale(1.05); }
+
+/* Image zoom */
+.img-zoom { overflow: hidden; }
+.img-zoom img, .img-zoom .img-placeholder { transition: transform 0.5s ease; }
+.img-zoom:hover img, .img-zoom:hover .img-placeholder { transform: scale(1.08); }
+
+/* Timeline */
+.timeline-line { position: absolute; left: 16px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, #00ff88, #00d4ff, transparent); }
+.timeline-dot { position: absolute; left: 9px; top: 6px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #00ff88; background: #0a0f1e; z-index: 2; }
+
+/* Scroll animations */
+.fade-up { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* Nav */
+.nav-link { position: relative; }
+.nav-link::after { content:''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: #00ff88; transition: width 0.3s; }
+.nav-link:hover::after { width: 100%; }
+
+/* Lightbox */
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100; display: none; align-items: center; justify-content: center; cursor: pointer; }
+.lightbox.active { display: flex; }
+
+/* Section divider */
+.section-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,136,0.3), transparent); margin: 0 auto; max-width: 600px; }
+
+/* Scrollbar */
+.app-wrapper::-webkit-scrollbar { width: 6px; }
+.app-wrapper::-webkit-scrollbar-track { background: #0a0f1e; }
+.app-wrapper::-webkit-scrollbar-thumb { background: #1a2340; border-radius: 3px; }
+
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* Gallery grid placeholder colors */
+.gallery-placeholder { background: linear-gradient(135deg, #1a2340, #243052); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: rgba(0,255,136,0.5); }
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div class="app-wrapper" id="appWrapper"><!-- Circuit BG -->
+   <div class="circuit-bg" id="circuitBg"></div><!-- Lightbox -->
+   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div style="max-width:90%;max-height:90%;position:relative;">
+     <div id="lightboxContent" class="text-center">
+      <div class="gallery-placeholder" style="width:600px;max-width:90vw;height:400px;border-radius:12px;font-size:14px;"><i data-lucide="image" style="width:48px;height:48px;"></i> <span class="mono text-sm">Image Preview</span>
+      </div>
+     </div>
+     <p id="lightboxCaption" class="text-center text-sm text-gray-400 mt-3 mono"></p>
+    </div>
+   </div><!-- Navigation -->
+   <nav class="fixed top-0 w-full z-50 backdrop-blur-md bg-dark-900/80 border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14"><a href="#hero" class="mono text-neon-green font-bold text-lg tracking-tight">&lt;SCR/&gt;</a>
+     <div class="hidden md:flex gap-6 text-sm"><a href="#about" class="nav-link text-gray-400 hover:text-white transition">About</a> <a href="#skills" class="nav-link text-gray-400 hover:text-white transition">Skills</a> <a href="#experience" class="nav-link text-gray-400 hover:text-white transition">Experience</a> <a href="#projects" class="nav-link text-gray-400 hover:text-white transition">Projects</a> <a href="#gallery" class="nav-link text-gray-400 hover:text-white transition">Gallery</a> <a href="#contact" class="nav-link text-gray-400 hover:text-white transition">Contact</a>
+     </div><button id="mobileMenuBtn" class="md:hidden text-gray-400 hover:text-white" onclick="toggleMobileMenu()"> <i data-lucide="menu" style="width:22px;height:22px;"></i> </button>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden bg-dark-800 border-t border-white/5 px-6 py-4 space-y-3 text-sm"><a href="#about" class="block text-gray-400 hover:text-neon-green transition" onclick="closeMobileMenu()">About</a> <a href="#skills" class="block text-gray-400 hover:text-neon-green transition" onclick="closeMobileMenu()">Skills</a> <a href="#experience" class="block text-gray-400 hover:text-neon-green transition" onclick="closeMobileMenu()">Experience</a> <a href="#projects" class="block text-gray-400 hover:text-neon-green transition" onclick="closeMobileMenu()">Projects</a> <a href="#gallery" class="block text-gray-400 hover:text-neon-green transition" onclick="closeMobileMenu()">Gallery</a> <a href="#contact" class="block text-gray-400 hover:text-neon-green transition" onclick="closeMobileMenu()">Contact</a>
+    </div>
+   </nav><!-- HERO -->
+   <section id="hero" class="relative min-h-screen flex items-center justify-center px-4 sm:px-6 pt-14" style="min-height:100%;">
+    <div class="relative z-10 text-center max-w-3xl mx-auto">
+     <div class="mono text-neon-green text-sm mb-3 opacity-80 tracking-widest">
+      // FIRMWARE ENGINEER
+     </div>
+     <h1 id="heroName" class="text-4xl sm:text-5xl md:text-6xl font-800 text-white mb-4 glow-text leading-tight">Sam Christober Raja K</h1>
+     <div class="text-lg sm:text-xl text-gray-300 mb-2"><span class="mono text-neon-cyan" id="typingText"></span><span class="typing-cursor"></span>
+     </div>
+     <p id="heroTagline" class="text-gray-400 mt-4 text-base sm:text-lg max-w-xl mx-auto">Building scalable IoT systems with embedded intelligence</p>
+     <div class="flex flex-wrap gap-4 justify-center mt-8"><a href="#projects" class="inline-flex items-center gap-2 bg-neon-green/10 border border-neon-green/40 text-neon-green px-6 py-2.5 rounded-lg mono text-sm hover:bg-neon-green/20 transition"> <i data-lucide="cpu" style="width:16px;height:16px;"></i> View Projects </a> <a href="#contact" class="inline-flex items-center gap-2 bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan px-6 py-2.5 rounded-lg mono text-sm hover:bg-neon-cyan/20 transition"> <i data-lucide="download" style="width:16px;height:16px;"></i> Download Resume </a>
+     </div><!-- Stats -->
+     <div class="grid grid-cols-3 gap-4 mt-12 max-w-md mx-auto">
+      <div class="text-center">
+       <div class="text-2xl font-bold text-neon-green glow-text">
+        3+
+       </div>
+       <div class="text-xs text-gray-500 mono mt-1">
+        Years Exp
+       </div>
+      </div>
+      <div class="text-center">
+       <div class="text-2xl font-bold text-neon-cyan glow-text-cyan">
+        10+
+       </div>
+       <div class="text-xs text-gray-500 mono mt-1">
+        IoT Devices
+       </div>
+      </div>
+      <div class="text-center">
+       <div class="text-2xl font-bold text-neon-green glow-text">
+        5+
+       </div>
+       <div class="text-xs text-gray-500 mono mt-1">
+        Deployments
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- ABOUT -->
+   <section id="about" class="relative z-10 py-20 px-4 sm:px-6">
+    <div class="section-divider mb-16"></div>
+    <div class="max-w-5xl mx-auto fade-up">
+     <h2 class="mono text-neon-green text-sm tracking-widest mb-2">// ABOUT ME</h2>
+     <h3 class="text-3xl font-bold text-white mb-10">Who I Am</h3>
+     <div class="grid md:grid-cols-5 gap-8 items-center"><!-- Photo -->
+      <div class="md:col-span-2 flex justify-center">
+       <div class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-2xl overflow-hidden glow-green border-2 border-neon-green/20">
+        <div class="w-full h-full gallery-placeholder"><i data-lucide="user" style="width:64px;height:64px;opacity:0.4;color:#00ff88;"></i> <span class="mono text-xs" style="color:rgba(0,255,136,0.4);">Profile Photo</span>
+        </div>
+        <div class="absolute inset-0 rounded-2xl border-2 border-neon-green/10 pointer-events-none"></div>
+       </div>
+      </div><!-- Text -->
+      <div class="md:col-span-3">
+       <p id="aboutText" class="text-gray-300 leading-relaxed mb-6">IoT &amp; Embedded Firmware Engineer with 3+ years of experience in designing and deploying production-grade embedded systems. Specialized in ARM Cortex-M3 (STM32), ESP32, FreeRTOS, and wireless protocols including LoRaWAN, MQTT, and Modbus. Passionate about building intelligent systems for smart agriculture, industrial automation, and remote monitoring.</p>
+       <div class="grid grid-cols-2 gap-3">
+        <div class="flex items-center gap-2 text-sm">
+         <i data-lucide="check-circle" style="width:14px;height:14px;color:#00ff88;"></i><span class="text-gray-400">3+ Years Experience</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+         <i data-lucide="check-circle" style="width:14px;height:14px;color:#00ff88;"></i><span class="text-gray-400">10+ IoT Devices Built</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+         <i data-lucide="check-circle" style="width:14px;height:14px;color:#00ff88;"></i><span class="text-gray-400">Real-world Deployments</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+         <i data-lucide="check-circle" style="width:14px;height:14px;color:#00ff88;"></i><span class="text-gray-400">Embedded + Cloud</span>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- SKILLS -->
+   <section id="skills" class="relative z-10 py-20 px-4 sm:px-6">
+    <div class="section-divider mb-16"></div>
+    <div class="max-w-5xl mx-auto fade-up">
+     <h2 class="mono text-neon-green text-sm tracking-widest mb-2">// TECHNICAL SKILLS</h2>
+     <h3 class="text-3xl font-bold text-white mb-10">Tech Arsenal</h3>
+     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" id="skillsGrid"></div>
+    </div>
+   </section><!-- EXPERIENCE -->
+   <section id="experience" class="relative z-10 py-20 px-4 sm:px-6">
+    <div class="section-divider mb-16"></div>
+    <div class="max-w-4xl mx-auto fade-up">
+     <h2 class="mono text-neon-green text-sm tracking-widest mb-2">// EXPERIENCE</h2>
+     <h3 class="text-3xl font-bold text-white mb-10">Career Path</h3>
+     <div class="relative pl-10">
+      <div class="timeline-line"></div><!-- Job -->
+      <div class="relative mb-10">
+       <div class="timeline-dot"></div>
+       <div class="bg-dark-700/60 border border-white/5 rounded-xl p-6 card-hover">
+        <div class="flex flex-wrap items-center gap-3 mb-3">
+         <h4 class="text-lg font-semibold text-white">Senior IoT Engineer</h4><span class="mono text-xs bg-neon-green/10 text-neon-green px-2 py-0.5 rounded">Current</span>
+        </div>
+        <p class="text-neon-cyan text-sm mono mb-4">Sun Bio IT Solutions</p>
+        <ul class="space-y-2 text-sm text-gray-400">
+         <li class="flex items-start gap-2"><i data-lucide="chevron-right" style="width:14px;height:14px;color:#00ff88;flex-shrink:0;margin-top:3px;"></i>Developed 10+ production IoT devices for agriculture &amp; industrial domains</li>
+         <li class="flex items-start gap-2"><i data-lucide="chevron-right" style="width:14px;height:14px;color:#00ff88;flex-shrink:0;margin-top:3px;"></i>Implemented LoRaWAN communication for long-range sensor networks</li>
+         <li class="flex items-start gap-2"><i data-lucide="chevron-right" style="width:14px;height:14px;color:#00ff88;flex-shrink:0;margin-top:3px;"></i>Built FreeRTOS-based firmware for multi-tasking embedded applications</li>
+         <li class="flex items-start gap-2"><i data-lucide="chevron-right" style="width:14px;height:14px;color:#00ff88;flex-shrink:0;margin-top:3px;"></i>Integrated cloud platforms via MQTT/HTTP for real-time monitoring</li>
+         <li class="flex items-start gap-2"><i data-lucide="chevron-right" style="width:14px;height:14px;color:#00ff88;flex-shrink:0;margin-top:3px;"></i>Achieved 40% power optimization through sleep mode strategies</li>
+        </ul>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- PROJECTS -->
+   <section id="projects" class="relative z-10 py-20 px-4 sm:px-6">
+    <div class="section-divider mb-16"></div>
+    <div class="max-w-5xl mx-auto fade-up">
+     <h2 class="mono text-neon-green text-sm tracking-widest mb-2">// PROJECTS</h2>
+     <h3 class="text-3xl font-bold text-white mb-10">Featured Work</h3>
+     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="projectsGrid"></div>
+    </div>
+   </section><!-- GALLERY -->
+   <section id="gallery" class="relative z-10 py-20 px-4 sm:px-6">
+    <div class="section-divider mb-16"></div>
+    <div class="max-w-5xl mx-auto fade-up">
+     <h2 class="mono text-neon-green text-sm tracking-widest mb-2">// GALLERY</h2>
+     <h3 class="text-3xl font-bold text-white mb-10">Hardware &amp; Deployments</h3>
+     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="galleryGrid"></div>
+    </div>
+   </section><!-- ACHIEVEMENTS -->
+   <section id="achievements" class="relative z-10 py-20 px-4 sm:px-6">
+    <div class="section-divider mb-16"></div>
+    <div class="max-w-4xl mx-auto fade-up">
+     <h2 class="mono text-neon-green text-sm tracking-widest mb-2">// IMPACT</h2>
+     <h3 class="text-3xl font-bold text-white mb-10">Achievements</h3>
+     <div class="grid sm:grid-cols-2 gap-4">
+      <div class="bg-dark-700/60 border border-white/5 rounded-xl p-5 card-hover flex items-start gap-4">
+       <div class="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center flex-shrink-0">
+        <i data-lucide="rocket" style="width:20px;height:20px;color:#00ff88;"></i>
+       </div>
+       <div>
+        <h4 class="text-white font-semibold text-sm mb-1">Production Deployments</h4>
+        <p class="text-gray-400 text-xs">Successfully deployed IoT systems across multiple agricultural sites</p>
+       </div>
+      </div>
+      <div class="bg-dark-700/60 border border-white/5 rounded-xl p-5 card-hover flex items-start gap-4">
+       <div class="w-10 h-10 rounded-lg bg-neon-cyan/10 flex items-center justify-center flex-shrink-0">
+        <i data-lucide="zap" style="width:20px;height:20px;color:#00d4ff;"></i>
+       </div>
+       <div>
+        <h4 class="text-white font-semibold text-sm mb-1">40% Power Optimization</h4>
+        <p class="text-gray-400 text-xs">Reduced device power consumption through intelligent sleep strategies</p>
+       </div>
+      </div>
+      <div class="bg-dark-700/60 border border-white/5 rounded-xl p-5 card-hover flex items-start gap-4">
+       <div class="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center flex-shrink-0">
+        <i data-lucide="shield" style="width:20px;height:20px;color:#00ff88;"></i>
+       </div>
+       <div>
+        <h4 class="text-white font-semibold text-sm mb-1">99.5% Uptime</h4>
+        <p class="text-gray-400 text-xs">Built reliable systems with watchdog timers and failsafe mechanisms</p>
+       </div>
+      </div>
+      <div class="bg-dark-700/60 border border-white/5 rounded-xl p-5 card-hover flex items-start gap-4">
+       <div class="w-10 h-10 rounded-lg bg-neon-cyan/10 flex items-center justify-center flex-shrink-0">
+        <i data-lucide="layers" style="width:20px;height:20px;color:#00d4ff;"></i>
+       </div>
+       <div>
+        <h4 class="text-white font-semibold text-sm mb-1">Scalable Architecture</h4>
+        <p class="text-gray-400 text-xs">Designed modular firmware supporting 100+ concurrent sensor nodes</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- CONTACT -->
+   <section id="contact" class="relative z-10 py-20 px-4 sm:px-6 pb-10">
+    <div class="section-divider mb-16"></div>
+    <div class="max-w-3xl mx-auto fade-up">
+     <h2 class="mono text-neon-green text-sm tracking-widest mb-2">// CONTACT</h2>
+     <h3 class="text-3xl font-bold text-white mb-10">Get In Touch</h3>
+     <div class="grid sm:grid-cols-2 gap-6 mb-10">
+      <div class="space-y-4"><a href="mailto:samchristober@gmail.com" class="flex items-center gap-3 text-gray-400 hover:text-neon-green transition text-sm">
+        <div class="w-9 h-9 rounded-lg bg-neon-green/10 flex items-center justify-center">
+         <i data-lucide="mail" style="width:16px;height:16px;color:#00ff88;"></i>
+        </div><span id="contactEmail">samchristober@gmail.com</span> </a> <a href="tel:+919876543210" class="flex items-center gap-3 text-gray-400 hover:text-neon-cyan transition text-sm">
+        <div class="w-9 h-9 rounded-lg bg-neon-cyan/10 flex items-center justify-center">
+         <i data-lucide="phone" style="width:16px;height:16px;color:#00d4ff;"></i>
+        </div><span id="contactPhone">+91 98765 43210</span> </a> <a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 text-gray-400 hover:text-neon-green transition text-sm">
+        <div class="w-9 h-9 rounded-lg bg-neon-green/10 flex items-center justify-center">
+         <i data-lucide="linkedin" style="width:16px;height:16px;color:#00ff88;"></i>
+        </div><span>LinkedIn Profile</span> </a> <a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 text-gray-400 hover:text-neon-cyan transition text-sm">
+        <div class="w-9 h-9 rounded-lg bg-neon-cyan/10 flex items-center justify-center">
+         <i data-lucide="github" style="width:16px;height:16px;color:#00d4ff;"></i>
+        </div><span>GitHub Profile</span> </a>
+      </div><!-- Contact Form -->
+      <form id="contactForm" class="space-y-3" onsubmit="handleContact(event)"><input type="text" placeholder="Your Name" required class="w-full bg-dark-700/60 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-neon-green/40 transition"> <input type="email" placeholder="Your Email" required class="w-full bg-dark-700/60 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-neon-green/40 transition"> <textarea placeholder="Your Message" rows="3" required class="w-full bg-dark-700/60 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-neon-green/40 transition resize-none"></textarea> <button type="submit" class="w-full bg-neon-green/10 border border-neon-green/40 text-neon-green py-2.5 rounded-lg mono text-sm hover:bg-neon-green/20 transition flex items-center justify-center gap-2"> <i data-lucide="send" style="width:14px;height:14px;"></i> Send Message </button>
+       <div id="formSuccess" class="hidden text-neon-green text-xs mono text-center mt-2">
+        ✓ Message sent successfully!
+       </div>
+      </form>
+     </div>
+    </div><!-- Footer -->
+    <div class="text-center text-gray-600 text-xs mono mt-10 pb-4">
+     &lt;/&gt; Designed by Sam Christober Raja K · 2024
+    </div>
+   </section>
+  </div>
+  <script>
+// ===== CONFIG & SDK =====
+const defaultConfig = {
+  hero_name: 'Sam Christober Raja K',
+  hero_tagline: 'Building scalable IoT systems with embedded intelligence',
+  about_text: 'IoT & Embedded Firmware Engineer with 3+ years of experience in designing and deploying production-grade embedded systems. Specialized in ARM Cortex-M3 (STM32), ESP32, FreeRTOS, and wireless protocols including LoRaWAN, MQTT, and Modbus. Passionate about building intelligent systems for smart agriculture, industrial automation, and remote monitoring.',
+  contact_email: 'samchristober@gmail.com',
+  contact_phone: '+91 98765 43210',
+  background_color: '#0a0f1e',
+  surface_color: '#1a2340',
+  text_color: '#e2e8f0',
+  primary_action_color: '#00ff88',
+  secondary_action_color: '#00d4ff',
+  font_family: 'Outfit',
+  font_size: 16
+};
+
+function applyConfig(config) {
+  const c = { ...defaultConfig, ...config };
+  const el = id => document.getElementById(id);
+
+  el('heroName').textContent = c.hero_name;
+  el('heroTagline').textContent = c.hero_tagline;
+  el('aboutText').textContent = c.about_text;
+  el('contactEmail').textContent = c.contact_email;
+  el('contactPhone').textContent = c.contact_phone;
+
+  // Colors
+  document.documentElement.style.setProperty('--bg', c.background_color);
+  document.documentElement.style.setProperty('--surface', c.surface_color);
+  document.querySelector('.app-wrapper').style.background = c.background_color;
+  document.querySelectorAll('.bg-dark-700\\/60').forEach(e => e.style.background = c.surface_color + '99');
+
+  // Font
+  const font = c.font_family + ', Outfit, sans-serif';
+  document.body.style.fontFamily = font;
+  const baseSize = c.font_size || 16;
+  document.body.style.fontSize = baseSize + 'px';
+}
+
+if (window.elementSdk) {
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange: async (config) => applyConfig(config),
+    mapToCapabilities: (config) => ({
+      recolorables: [
+        { get: () => config.background_color || defaultConfig.background_color, set: v => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+        { get: () => config.surface_color || defaultConfig.surface_color, set: v => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+        { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+        { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: v => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+        { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: v => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+      ],
+      borderables: [],
+      fontEditable: {
+        get: () => config.font_family || defaultConfig.font_family,
+        set: v => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+      },
+      fontSizeable: {
+        get: () => config.font_size || defaultConfig.font_size,
+        set: v => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+      }
+    }),
+    mapToEditPanelValues: (config) => new Map([
+      ['hero_name', config.hero_name || defaultConfig.hero_name],
+      ['hero_tagline', config.hero_tagline || defaultConfig.hero_tagline],
+      ['about_text', config.about_text || defaultConfig.about_text],
+      ['contact_email', config.contact_email || defaultConfig.contact_email],
+      ['contact_phone', config.contact_phone || defaultConfig.contact_phone]
+    ])
+  });
+}
+
+// ===== CIRCUIT BACKGROUND =====
+(function buildCircuit() {
+  const bg = document.getElementById('circuitBg');
+  let html = '';
+  for (let i = 0; i < 12; i++) {
+    const top = Math.random() * 100;
+    const delay = Math.random() * 8;
+    const w = 100 + Math.random() * 300;
+    html += `<div class="circuit-line" style="top:${top}%;width:${w}px;animation-delay:${delay}s;"></div>`;
+  }
+  for (let i = 0; i < 8; i++) {
+    const left = Math.random() * 100;
+    const delay = Math.random() * 10;
+    const h = 80 + Math.random() * 200;
+    html += `<div class="circuit-line-v" style="left:${left}%;height:${h}px;animation-delay:${delay}s;"></div>`;
+  }
+  for (let i = 0; i < 20; i++) {
+    const top = Math.random() * 100;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 3;
+    html += `<div class="circuit-dot" style="top:${top}%;left:${left}%;animation-delay:${delay}s;"></div>`;
+  }
+  bg.innerHTML = html;
+})();
+
+// ===== TYPING ANIMATION =====
+(function initTyping() {
+  const roles = ['IoT Engineer', 'Firmware Developer', 'Embedded Systems', 'FreeRTOS Expert', 'LoRaWAN Specialist'];
+  let ri = 0, ci = 0, deleting = false;
+  const el = document.getElementById('typingText');
+  function tick() {
+    const word = roles[ri];
+    if (!deleting) {
+      el.textContent = word.substring(0, ++ci);
+      if (ci === word.length) { setTimeout(() => { deleting = true; tick(); }, 2000); return; }
+    } else {
+      el.textContent = word.substring(0, --ci);
+      if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; }
+    }
+    setTimeout(tick, deleting ? 40 : 80);
+  }
+  tick();
+})();
+
+// ===== SKILLS =====
+(function buildSkills() {
+  const skills = [
+    { cat: 'Programming', icon: 'code', items: ['C', 'C++', 'Embedded C', 'Python'] },
+    { cat: 'Microcontrollers', icon: 'cpu', items: ['STM32 (Cortex-M3)', 'ESP32', 'Arduino', 'PIC'] },
+    { cat: 'Protocols', icon: 'cable', items: ['UART', 'SPI', 'I2C', 'MQTT', 'Modbus'] },
+    { cat: 'Wireless', icon: 'wifi', items: ['LoRa', 'LoRaWAN', 'GSM', 'Wi-Fi', 'ESP-NOW'] },
+    { cat: 'RTOS & OS', icon: 'layers', items: ['FreeRTOS', 'Bare Metal', 'Linux'] },
+    { cat: 'Tools', icon: 'wrench', items: ['Logic Analyzer', 'Oscilloscope', 'Git', 'KiCad'] }
+  ];
+  const grid = document.getElementById('skillsGrid');
+  grid.innerHTML = skills.map(s => `
+    <div class="bg-dark-700/60 border border-white/5 rounded-xl p-5 card-hover">
+      <div class="flex items-center gap-2 mb-4">
+        <i data-lucide="${s.icon}" style="width:18px;height:18px;color:#00ff88;"></i>
+        <h4 class="text-white font-semibold text-sm">${s.cat}</h4>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        ${s.items.map(i => `<span class="badge-hover mono text-xs bg-dark-600/80 text-gray-300 px-2.5 py-1 rounded-md border border-white/5 cursor-default">${i}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+})();
+
+// ===== PROJECTS =====
+(function buildProjects() {
+  const projects = [
+    {
+      title: 'Smart Agriculture Monitoring',
+      desc: 'LoRaWAN-based soil & environmental monitoring system with automated irrigation control across large farmlands.',
+      tech: ['ESP32', 'LoRaWAN', 'MQTT', 'FreeRTOS', 'Sensors'],
+      icon: 'sprout',
+      color: '#00ff88'
+    },
+    {
+      title: 'Railway Lubrication Monitor',
+      desc: 'ESP32 + GSM based remote monitoring with image capture and control for railway track lubrication systems.',
+      tech: ['ESP32', 'GSM', 'Camera', 'Modbus', 'HTTP'],
+      icon: 'train-front',
+      color: '#00d4ff'
+    },
+    {
+      title: 'Solar Panel Cleaning Robot',
+      desc: 'ESP-NOW mesh networked robot with cloud integration for remote solar panel cleaning operations.',
+      tech: ['ESP32', 'ESP-NOW', 'Cloud', 'Motor Control'],
+      icon: 'sun',
+      color: '#4d7cff'
+    }
+  ];
+  const grid = document.getElementById('projectsGrid');
+  grid.innerHTML = projects.map(p => `
+    <div class="bg-dark-700/60 border border-white/5 rounded-xl overflow-hidden card-hover">
+      <div class="img-zoom">
+        <div class="gallery-placeholder h-40">
+          <i data-lucide="${p.icon}" style="width:36px;height:36px;color:${p.color};opacity:0.6;"></i>
+          <span class="mono text-xs" style="color:${p.color};opacity:0.5;">Project Image</span>
+        </div>
+      </div>
+      <div class="p-5">
+        <h4 class="text-white font-semibold mb-2">${p.title}</h4>
+        <p class="text-gray-400 text-xs leading-relaxed mb-4">${p.desc}</p>
+        <div class="flex flex-wrap gap-1.5">
+          ${p.tech.map(t => `<span class="mono text-[10px] bg-dark-600/80 text-gray-400 px-2 py-0.5 rounded border border-white/5">${t}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+})();
+
+// ===== GALLERY =====
+(function buildGallery() {
+  const items = [
+    { label: 'PCB Design - Sensor Node', icon: 'circuit-board' },
+    { label: 'Field Deployment - Farm', icon: 'sprout' },
+    { label: 'STM32 Dev Board Setup', icon: 'cpu' },
+    { label: 'LoRa Gateway Station', icon: 'radio' },
+    { label: 'Testing Environment', icon: 'monitor' },
+    { label: 'Solar Robot Assembly', icon: 'sun' },
+    { label: 'Oscilloscope Testing', icon: 'activity' },
+    { label: 'Enclosure Prototype', icon: 'box' }
+  ];
+  const grid = document.getElementById('galleryGrid');
+  grid.innerHTML = items.map((item, i) => `
+    <div class="img-zoom rounded-xl overflow-hidden cursor-pointer border border-white/5 hover:border-neon-green/20 transition" onclick="openLightbox('${item.label}')">
+      <div class="gallery-placeholder h-32 sm:h-36">
+        <i data-lucide="${item.icon}" style="width:28px;height:28px;"></i>
+        <span class="mono text-[10px] text-center px-2">${item.label}</span>
+      </div>
+    </div>
+  `).join('');
+})();
+
+// ===== LIGHTBOX =====
+function openLightbox(caption) {
+  document.getElementById('lightboxCaption').textContent = caption;
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+
+// ===== CONTACT FORM =====
+function handleContact(e) {
+  e.preventDefault();
+  e.target.reset();
+  document.getElementById('formSuccess').classList.remove('hidden');
+  setTimeout(() => document.getElementById('formSuccess').classList.add('hidden'), 3000);
+}
+
+// ===== MOBILE MENU =====
+function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
+function closeMobileMenu() { document.getElementById('mobileMenu').classList.add('hidden'); }
+
+// ===== SCROLL ANIMATIONS =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ===== INIT ICONS =====
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ed9882934ee6115',t:'MTc3NjQwOTAwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
